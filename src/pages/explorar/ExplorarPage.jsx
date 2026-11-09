@@ -6,6 +6,7 @@ import FiltrosAvisos from '../../components/avisos/FiltrosAvisos'
 import AvisoCard from '../../components/avisos/AvisoCard'
 import Paginacion from '../../components/comunes/Paginacion'
 import Spinner from '../../components/comunes/Spinner'
+import Icono from '../../components/comunes/Icono'
 
 const AVISOS_POR_PAGINA = 12
 
@@ -69,7 +70,7 @@ const ExplorarPage = () => {
       ) : resultado.avisos.length === 0 ? (
         <div className="estado-vacio">
           <span className="estado-vacio-icono">
-            <i className="fa-solid fa-magnifying-glass"></i>
+            <Icono nombre="search" />
           </span>
           <h2>No hay avisos con esos filtros</h2>
           <p className="texto-suave">Probá ampliando la búsqueda.</p>

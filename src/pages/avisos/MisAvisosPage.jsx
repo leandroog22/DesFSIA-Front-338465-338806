@@ -17,6 +17,7 @@ import FiltrosAvisos from '../../components/avisos/FiltrosAvisos'
 import AvisoFila from '../../components/avisos/AvisoFila'
 import Paginacion from '../../components/comunes/Paginacion'
 import Spinner from '../../components/comunes/Spinner'
+import Icono from '../../components/comunes/Icono'
 
 // Listado de los avisos del usuario (requerimiento 5.1.1).
 const MisAvisosPage = () => {
@@ -84,12 +85,12 @@ const MisAvisosPage = () => {
         </div>
         {hayCupo ? (
           <Link to="/avisos/nuevo" className="btn btn-primario">
-            <i className="fa-solid fa-plus"></i> Nuevo aviso
+            <Icono nombre="add" /> Nuevo aviso
           </Link>
         ) : (
           <div className="sin-cupo">
             <button type="button" className="btn btn-primario" disabled>
-              <i className="fa-solid fa-lock"></i> Nuevo aviso
+              <Icono nombre="lock" /> Nuevo aviso
             </button>
             <Link to="/dashboard" className="texto-chico">
               Llegaste al límite. Ver planes
@@ -105,7 +106,7 @@ const MisAvisosPage = () => {
       ) : lista.length === 0 ? (
         <div className="estado-vacio">
           <span className="estado-vacio-icono">
-            <i className={`fa-solid ${hayFiltros ? 'fa-filter-circle-xmark' : 'fa-file-circle-plus'}`}></i>
+            <Icono nombre={hayFiltros ? 'filter_alt_off' : 'note_add'} />
           </span>
           {hayFiltros ? (
             <>

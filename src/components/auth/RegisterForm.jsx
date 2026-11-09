@@ -8,8 +8,9 @@ import { registroSchema } from '../../validators/auth.validators'
 import { registroService } from '../../services/auth.services'
 import { iniciarSesion } from '../../features/auth/auth.slice'
 import { mensajeDeError } from '../../utils/errores'
-import CampoError from '../comunes/CampoError'
 import AlertaError from '../comunes/AlertaError'
+import Spinner from '../comunes/Spinner'
+import CampoAuth from './CampoAuth'
 
 const RegisterForm = () => {
   const ids = {
@@ -32,7 +33,7 @@ const RegisterForm = () => {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid, isSubmitting, dirtyFields },
   } = useForm({
     resolver: joiResolver(registroSchema),
     mode: 'onChange',
@@ -44,6 +45,9 @@ const RegisterForm = () => {
       confirmPassword: '',
     },
   })
+
+  // Un campo se marca "Valido" cuando el usuario ya lo toco y no tiene error.
+  const esValido = (campo) => Boolean(dirtyFields[campo]) && !errors[campo]
 
   const registrar = async (datos) => {
     setErrorServidor(null)
@@ -57,49 +61,57 @@ const RegisterForm = () => {
       toast.success(`¡Bienvenida/o a Tripalium, ${usuario.nombreEmpresa}!`)
       navigate('/dashboard', { replace: true })
     } catch (error) {
-      // El 409 trae en details que campo esta repetido: se marca ese campo.
-      const details = error.response?.data?.details
       const mensaje = mensajeDeError(error)
+      setErrorServidor(mensaje)
+
+      // El 409 trae en details que campo esta repetido: ademas del aviso
+      // general, se marca ese campo para que el usuario sepa que cambiar.
+      const details = error.response?.data?.details
       if (error.response?.status === 409 && details?.username) {
-        setError('username', { message: mensaje })
+        setError('username', { message: 'Elegí otro nombre de usuario' })
       } else if (error.response?.status === 409 && details?.email) {
-        setError('email', { message: mensaje })
-      } else {
-        setErrorServidor(mensaje)
+        setError('email', { message: 'Usá otro email' })
       }
     }
   }
 
   return (
     <>
+      <AlertaError
+        titulo={errorServidor}
+        mensaje={errorServidor && 'Revisá los datos marcados y volvé a intentar.'}
+      />
+
       <form onSubmit={handleSubmit(registrar)} noValidate>
-        <div className="form-group">
-          <label htmlFor={ids.nombreEmpresa}>Nombre de la empresa</label>
+        <CampoAuth
+          id={ids.nombreEmpresa}
+          etiqueta="Nombre de la empresa"
+          icono="domain"
+          ayuda="Requerido"
+          error={errors.nombreEmpresa}
+          valido={esValido('nombreEmpresa')}
+        >
           <input
             type="text"
             id={ids.nombreEmpresa}
             autoComplete="organization"
-            placeholder="Acme Software"
+            placeholder="Ej. Acme Inc."
             {...register('nombreEmpresa')}
           />
-          <CampoError error={errors.nombreEmpresa} />
-        </div>
+        </CampoAuth>
 
         <div className="form-fila">
-          <div className="form-group">
-            <label htmlFor={ids.username}>Usuario</label>
-            <input
-              type="text"
-              id={ids.username}
-              autoComplete="username"
-              placeholder="acme"
-              {...register('username')}
-            />
-            <CampoError error={errors.username} />
-          </div>
+          <CampoAuth
+            id={ids.username}
+            etiqueta="Usuario"
+            icono="badge"
+            error={errors.username}
+            valido={esValido('username')}
+          >
+            <input type="text" id={ids.username} autoComplete="username" placeholder="acme" {...register('username')} />
+          </CampoAuth>
 
-          <div className="form-group">
-            <label htmlFor={ids.email}>Email</label>
+          <CampoAuth id={ids.email} etiqueta="Email" icono="mail" error={errors.email} valido={esValido('email')}>
             <input
               type="email"
               id={ids.email}
@@ -107,13 +119,17 @@ const RegisterForm = () => {
               placeholder="rrhh@acme.com"
               {...register('email')}
             />
-            <CampoError error={errors.email} />
-          </div>
+          </CampoAuth>
         </div>
 
         <div className="form-fila">
-          <div className="form-group">
-            <label htmlFor={ids.password}>Contraseña</label>
+          <CampoAuth
+            id={ids.password}
+            etiqueta="Contraseña"
+            icono="lock"
+            error={errors.password}
+            valido={esValido('password')}
+          >
             {/* deps: al cambiar la contraseña se revalida la confirmacion,
                 si no "no coinciden" quedaria desactualizado */}
             <input
@@ -123,11 +139,15 @@ const RegisterForm = () => {
               placeholder="Mínimo 6 caracteres"
               {...register('password', { deps: ['confirmPassword'] })}
             />
-            <CampoError error={errors.password} />
-          </div>
+          </CampoAuth>
 
-          <div className="form-group">
-            <label htmlFor={ids.confirmPassword}>Repetir contraseña</label>
+          <CampoAuth
+            id={ids.confirmPassword}
+            etiqueta="Repetir contraseña"
+            icono="lock_reset"
+            error={errors.confirmPassword}
+            valido={esValido('confirmPassword')}
+          >
             <input
               type="password"
               id={ids.confirmPassword}
@@ -135,20 +155,17 @@ const RegisterForm = () => {
               placeholder="Repetila"
               {...register('confirmPassword')}
             />
-            <CampoError error={errors.confirmPassword} />
-          </div>
+          </CampoAuth>
         </div>
-
-        <AlertaError mensaje={errorServidor} />
 
         {/* Deshabilitado mientras algun dato sea invalido, como pide la letra */}
         <button type="submit" className="btn btn-primario btn-bloque" disabled={!isValid || isSubmitting}>
-          {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Crear cuenta'}
+          {isSubmitting ? <Spinner enLinea /> : 'Crear cuenta'}
         </button>
       </form>
 
       <p className="auth-alternativa">
-        ¿Ya tenés cuenta? <Link to="/">Ingresá acá</Link>
+        ¿Ya tenés cuenta? <Link to="/">Iniciá sesión</Link>
       </p>
     </>
   )

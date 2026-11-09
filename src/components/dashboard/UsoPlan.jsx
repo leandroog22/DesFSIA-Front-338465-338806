@@ -1,4 +1,3 @@
-import { Link } from 'react-router'
 import { useSelector } from 'react-redux'
 import PlanBadge from '../comunes/PlanBadge'
 
@@ -8,42 +7,35 @@ const UsoPlan = () => {
   const uso = useSelector((state) => state.uso.datos)
 
   if (!uso) {
-    return <div className="tarjeta tarjeta-cargando" aria-busy="true"></div>
+    return <div className="tarjeta-cargando" aria-busy="true"></div>
   }
 
   if (uso.ilimitado) {
     return (
-      <div className="tarjeta uso-plan">
-        <div className="tarjeta-encabezado">
-          <h3>Uso del plan</h3>
-          <PlanBadge plan={uso.plan} />
-        </div>
-        <p className="uso-numero">{uso.usados}</p>
+      <div className="uso-plan">
+        <PlanBadge plan="premium" prefijo />
+        <h2>
+          {uso.usados} {uso.usados === 1 ? 'aviso activo' : 'avisos activos'} · Ilimitados
+        </h2>
         <p className="texto-suave">
-          {uso.usados === 1 ? 'aviso activo' : 'avisos activos'} · sin límite de publicaciones
+          Tu cuenta tiene publicación de vacantes ilimitada: no hace falta cerrar avisos para publicar nuevos.
         </p>
       </div>
     )
   }
 
-  // El color de la barra avisa cuando el cupo se esta por agotar.
-  const nivel = uso.porcentaje >= 100 ? 'lleno' : uso.porcentaje >= 75 ? 'alto' : 'normal'
   const restantes = Math.max(uso.limite - uso.usados, 0)
+  // El color de la barra avisa cuando el cupo se esta por agotar.
+  const claseBarra = uso.porcentaje >= 100 ? 'barra-llena' : uso.porcentaje >= 75 ? 'barra-alta' : ''
 
   return (
-    <div className="tarjeta uso-plan">
-      <div className="tarjeta-encabezado">
-        <h3>Uso del plan</h3>
-        <PlanBadge plan={uso.plan} />
-      </div>
-
-      <p className="uso-numero">
-        {uso.porcentaje}
-        <span>%</span>
-      </p>
-
+    <div className="uso-plan">
+      <span className="eyebrow">Uso del plan Plus</span>
+      <h2>
+        Usaste {uso.usados} de {uso.limite} avisos activos
+      </h2>
       <div
-        className={`barra-progreso barra-${nivel}`}
+        className={`barra ${claseBarra}`}
         role="progressbar"
         aria-valuenow={uso.porcentaje}
         aria-valuemin={0}
@@ -51,22 +43,12 @@ const UsoPlan = () => {
       >
         <div style={{ width: `${Math.min(uso.porcentaje, 100)}%` }}></div>
       </div>
-
-      <p className="texto-suave">
-        {uso.usados} de {uso.limite} avisos activos ·{' '}
-        {restantes === 0 ? (
-          <strong className="texto-peligro">sin cupo disponible</strong>
-        ) : (
-          `te ${restantes === 1 ? 'queda 1 lugar' : `quedan ${restantes} lugares`}`
-        )}
-      </p>
-
-      {restantes === 0 && (
-        <p className="texto-chico">
-          Cerrá un aviso en <Link to="/avisos">Mis avisos</Link> para liberar cupo, o pasate a
-          Premium.
-        </p>
-      )}
+      <div className="uso-plan-cifras">
+        <span>{uso.porcentaje}% de capacidad utilizada</span>
+        <strong className={restantes === 0 ? 'texto-peligro' : ''}>
+          {restantes === 0 ? 'Sin cupo disponible' : `${restantes} ${restantes === 1 ? 'lugar libre' : 'lugares libres'}`}
+        </strong>
+      </div>
     </div>
   )
 }

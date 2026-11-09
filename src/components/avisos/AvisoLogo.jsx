@@ -1,10 +1,12 @@
 import { inicial } from '../../utils/formato'
 
 // Logo del aviso subido a Cloudinary o, si no tiene, la inicial de la empresa.
-const AvisoLogo = ({ aviso, tamanio = 'mediano' }) => {
+// En el detalle la imagen ya se muestra grande como portada, asi que ahi se
+// pide solo la inicial (conImagen=false).
+const AvisoLogo = ({ aviso, tamanio = 'mediano', conImagen = true }) => {
   const nombre = aviso.autor?.nombreEmpresa ?? aviso.titulo
 
-  if (aviso.imagenUrl) {
+  if (aviso.imagenUrl && conImagen) {
     return <img className={`aviso-logo aviso-logo-${tamanio}`} src={aviso.imagenUrl} alt={`Logo de ${nombre}`} />
   }
 

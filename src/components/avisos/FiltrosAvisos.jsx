@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { ESTADOS, MODALIDADES, SENIORITIES } from '../../constants/avisos.constants'
 import { quitarVacios } from '../../utils/objetos'
 import CampoError from '../comunes/CampoError'
+import Icono from '../comunes/Icono'
 
 const FILTROS_VACIOS = { q: '', categoria: '', modalidad: '', seniority: '', estado: '' }
 
@@ -37,15 +38,17 @@ const FiltrosAvisos = ({ valores = {}, onAplicar, mostrarEstado = false }) => {
         <label htmlFor={busquedaId} className="solo-lectores">
           Buscar
         </label>
-        <i className="fa-solid fa-magnifying-glass"></i>
-        <input
-          id={busquedaId}
-          type="search"
-          placeholder="Buscar por título o descripción..."
-          {...register('q', {
-            maxLength: { value: 80, message: 'La búsqueda no puede superar los 80 caracteres' },
-          })}
-        />
+        <div className="input-con-icono">
+          <Icono nombre="search" />
+          <input
+            id={busquedaId}
+            type="search"
+            placeholder="Buscar por título o descripción..."
+            {...register('q', {
+              maxLength: { value: 80, message: 'La búsqueda no puede superar los 80 caracteres' },
+            })}
+          />
+        </div>
         <CampoError error={errors.q} />
       </div>
 
@@ -91,8 +94,8 @@ const FiltrosAvisos = ({ valores = {}, onAplicar, mostrarEstado = false }) => {
         Buscar
       </button>
       {hayFiltros && (
-        <button type="button" className="btn btn-texto" onClick={limpiar}>
-          <i className="fa-solid fa-xmark"></i> Limpiar
+        <button type="button" className="btn btn-fantasma" onClick={limpiar}>
+          <Icono nombre="close" /> Limpiar
         </button>
       )}
     </form>

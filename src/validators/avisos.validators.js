@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { TAMANIO_MAXIMO_IMAGEN_MB } from '../constants/avisos.constants'
 
 const VALORES_MODALIDAD = ['presencial', 'hibrido', 'remoto']
 const VALORES_SENIORITY = ['junior', 'semi', 'senior']
@@ -58,7 +59,25 @@ const campos = {
   }),
 }
 
-export const avisoSchema = Joi.object(campos)
+// La portada es opcional y llega como FileList (lo que entrega un
+// <input type="file">). Se valida tipo y tamaño antes de subirla, con los
+// mismos limites que aplica multer en el backend.
+const BYTES_MAXIMOS_IMAGEN = TAMANIO_MAXIMO_IMAGEN_MB * 1024 * 1024
+
+export const imagenSchema = Joi.any()
+  .custom((archivos, helpers) => {
+    const archivo = archivos?.[0]
+    if (!archivo) return archivos
+    if (!archivo.type.startsWith('image/')) return helpers.error('imagen.tipo')
+    if (archivo.size > BYTES_MAXIMOS_IMAGEN) return helpers.error('imagen.tamanio')
+    return archivos
+  })
+  .messages({
+    'imagen.tipo': 'El archivo tiene que ser una imagen (PNG, JPG o WebP)',
+    'imagen.tamanio': `La imagen no puede superar los ${TAMANIO_MAXIMO_IMAGEN_MB} MB`,
+  })
+
+export const avisoSchema = Joi.object({ ...campos, imagen: imagenSchema })
 
 export const edicionAvisoSchema = Joi.object({
   titulo: campos.titulo,

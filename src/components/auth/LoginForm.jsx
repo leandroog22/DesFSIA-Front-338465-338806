@@ -8,8 +8,10 @@ import { loginSchema } from '../../validators/auth.validators'
 import { loginService } from '../../services/auth.services'
 import { iniciarSesion } from '../../features/auth/auth.slice'
 import { mensajeDeError } from '../../utils/errores'
-import CampoError from '../comunes/CampoError'
 import AlertaError from '../comunes/AlertaError'
+import Spinner from '../comunes/Spinner'
+import Icono from '../comunes/Icono'
+import CampoAuth from './CampoAuth'
 
 const LoginForm = () => {
   const usernameId = useId()
@@ -53,8 +55,7 @@ const LoginForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit(ingresar)} noValidate>
-        <div className="form-group">
-          <label htmlFor={usernameId}>Usuario</label>
+        <CampoAuth id={usernameId} etiqueta="Usuario" icono="person" error={errors.username}>
           <input
             type="text"
             id={usernameId}
@@ -62,11 +63,9 @@ const LoginForm = () => {
             placeholder="tu_empresa"
             {...register('username')}
           />
-          <CampoError error={errors.username} />
-        </div>
+        </CampoAuth>
 
-        <div className="form-group">
-          <label htmlFor={passwordId}>Contraseña</label>
+        <CampoAuth id={passwordId} etiqueta="Contraseña" icono="lock" error={errors.password}>
           <input
             type="password"
             id={passwordId}
@@ -74,13 +73,18 @@ const LoginForm = () => {
             placeholder="••••••••"
             {...register('password')}
           />
-          <CampoError error={errors.password} />
-        </div>
+        </CampoAuth>
 
         <AlertaError mensaje={errorServidor} />
 
         <button type="submit" className="btn btn-primario btn-bloque" disabled={!isValid || isSubmitting}>
-          {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Ingresar'}
+          {isSubmitting ? (
+            <Spinner enLinea />
+          ) : (
+            <>
+              Ingresar <Icono nombre="arrow_forward" />
+            </>
+          )}
         </button>
       </form>
 

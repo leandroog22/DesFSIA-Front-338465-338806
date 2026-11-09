@@ -1,3 +1,5 @@
+import Icono from './Icono'
+
 // El backend pagina los avisos ({ page, totalPages }); este componente solo
 // avisa que pagina se pidio y la pagina se encarga de volver a consultar.
 const Paginacion = ({ page, totalPages, onCambiar }) => {
@@ -11,7 +13,7 @@ const Paginacion = ({ page, totalPages, onCambiar }) => {
         onClick={() => onCambiar(page - 1)}
         disabled={page <= 1}
       >
-        <i className="fa-solid fa-chevron-left"></i> Anterior
+        <Icono nombre="chevron_left" /> Anterior
       </button>
       <span>
         Página {page} de {totalPages}
@@ -22,7 +24,7 @@ const Paginacion = ({ page, totalPages, onCambiar }) => {
         onClick={() => onCambiar(page + 1)}
         disabled={page >= totalPages}
       >
-        Siguiente <i className="fa-solid fa-chevron-right"></i>
+        Siguiente <Icono nombre="chevron_right" />
       </button>
     </nav>
   )

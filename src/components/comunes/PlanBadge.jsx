@@ -1,11 +1,15 @@
-const PlanBadge = ({ plan }) => {
+import Icono from './Icono'
+
+const PlanBadge = ({ plan, prefijo = false }) => {
   if (!plan) return null
 
   const esPremium = plan === 'premium'
 
   return (
-    <span className={`badge ${esPremium ? 'badge-premium' : 'badge-plus'}`}>
-      {esPremium && <i className="fa-solid fa-crown"></i>} {esPremium ? 'Premium' : 'Plus'}
+    <span className={`pill ${esPremium ? 'pill-premium' : 'pill-plus'}`}>
+      {esPremium && <Icono nombre="workspace_premium" relleno />}
+      {prefijo ? 'Plan ' : ''}
+      {esPremium ? 'Premium' : 'Plus'}
     </span>
   )
 }

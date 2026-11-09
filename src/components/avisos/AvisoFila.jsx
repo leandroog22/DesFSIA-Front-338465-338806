@@ -9,6 +9,8 @@ import { mensajeDeError } from '../../utils/errores'
 import AvisoLogo from './AvisoLogo'
 import AvisoEtiquetas from './AvisoEtiquetas'
 import AvisoEdicionInline from './AvisoEdicionInline'
+import Icono from '../comunes/Icono'
+import Spinner from '../comunes/Spinner'
 
 // Una fila del listado de "Mis avisos" con sus acciones: editar en linea,
 // cerrar/reabrir y eliminar (requerimientos 5.1.2 y 5.1.3).
@@ -55,23 +57,23 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
   }
 
   return (
-    <article className={`aviso-fila ${estaActivo ? '' : 'aviso-fila-cerrado'}`}>
+    <article className={`aviso-item ${estaActivo ? '' : 'aviso-item-cerrado'}`}>
       <AvisoLogo aviso={aviso} />
 
-      <div className="aviso-fila-cuerpo">
-        <div className="aviso-fila-titulo">
+      <div className="aviso-item-cuerpo">
+        <div className="aviso-item-titulo">
           <Link to={`/avisos/${aviso._id}`}>{aviso.titulo}</Link>
-          <span className={`badge ${estaActivo ? 'badge-activo' : 'badge-cerrado'}`}>
+          <span className={`pill ${estaActivo ? 'pill-activo' : 'pill-cerrado'}`}>
             {estaActivo ? 'Activo' : 'Cerrado'}
           </span>
           {!aviso.iaProcesado && (
-            <span className="badge badge-alerta" title="La IA no pudo analizar este aviso">
-              <i className="fa-solid fa-triangle-exclamation"></i> Sin análisis IA
+            <span className="pill pill-alerta" title="La IA no pudo analizar este aviso">
+              <Icono nombre="warning" /> Sin análisis IA
             </span>
           )}
         </div>
         <AvisoEtiquetas aviso={aviso} />
-        <p className="aviso-fila-meta">
+        <p className="meta">
           <span>{formatearSalario(aviso)}</span>
           <span>·</span>
           <span>Publicado {formatearFechaRelativa(aviso.createdAt)}</span>
@@ -79,10 +81,10 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
       </div>
 
       {confirmandoBorrado ? (
-        <div className="aviso-fila-acciones confirmacion-inline">
+        <div className="aviso-item-acciones confirmacion-inline">
           <span>¿Eliminar este aviso?</span>
           <button type="button" className="btn btn-peligro btn-chico" onClick={eliminar} disabled={procesando}>
-            {procesando ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Sí, eliminar'}
+            {procesando ? <Spinner enLinea /> : 'Sí, eliminar'}
           </button>
           <button
             type="button"
@@ -94,7 +96,7 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
           </button>
         </div>
       ) : (
-        <div className="aviso-fila-acciones">
+        <div className="aviso-item-acciones">
           <button
             type="button"
             className="btn-icono"
@@ -103,7 +105,7 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
             title={estaActivo ? 'Cerrar aviso' : 'Reabrir aviso'}
             aria-label={estaActivo ? 'Cerrar aviso' : 'Reabrir aviso'}
           >
-            <i className={`fa-solid ${estaActivo ? 'fa-box-archive' : 'fa-box-open'}`}></i>
+            <Icono nombre={estaActivo ? 'inventory_2' : 'unarchive'} />
           </button>
           <button
             type="button"
@@ -113,7 +115,7 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
             title="Editar"
             aria-label="Editar aviso"
           >
-            <i className="fa-solid fa-pen"></i>
+            <Icono nombre="edit" />
           </button>
           <button
             type="button"
@@ -123,7 +125,7 @@ const AvisoFila = ({ aviso, onEliminado, onEstadoCambiado }) => {
             title="Eliminar"
             aria-label="Eliminar aviso"
           >
-            <i className="fa-solid fa-trash"></i>
+            <Icono nombre="delete" />
           </button>
         </div>
       )}

@@ -22,13 +22,13 @@ const AvisoCard = ({ aviso }) => {
       <AvisoEtiquetas aviso={aviso} />
 
       {aviso.skills.length > 0 && (
-        <div className="chips">
+        <div className="tags">
           {aviso.skills.slice(0, SKILLS_VISIBLES).map((skill) => (
-            <span key={skill} className="chip chip-skill">
+            <span key={skill} className="tag">
               {skill}
             </span>
           ))}
-          {skillsRestantes > 0 && <span className="chip chip-skill">+{skillsRestantes}</span>}
+          {skillsRestantes > 0 && <span className="tag">+{skillsRestantes}</span>}
         </div>
       )}
 

@@ -1,23 +1,24 @@
 import { MODALIDADES, SENIORITIES, etiquetaDe } from '../../constants/avisos.constants'
+import Icono from '../comunes/Icono'
 
-// Chips con categoria, modalidad, seniority y ubicacion.
+// Linea de datos del aviso: categoria, modalidad, seniority y ubicacion.
 const AvisoEtiquetas = ({ aviso }) => {
   return (
-    <div className="chips">
+    <div className="meta">
       {aviso.categoria && (
-        <span className="chip chip-categoria">
-          <i className="fa-solid fa-layer-group"></i> {aviso.categoria.nombre}
+        <span>
+          <Icono nombre="category" /> {aviso.categoria.nombre}
         </span>
       )}
-      <span className="chip">
-        <i className="fa-solid fa-house-laptop"></i> {etiquetaDe(MODALIDADES, aviso.modalidad)}
+      <span>
+        <Icono nombre={aviso.modalidad === 'remoto' ? 'public' : 'home_work'} /> {etiquetaDe(MODALIDADES, aviso.modalidad)}
       </span>
-      <span className="chip">
-        <i className="fa-solid fa-signal"></i> {etiquetaDe(SENIORITIES, aviso.seniority)}
+      <span>
+        <Icono nombre="signal_cellular_alt" /> {etiquetaDe(SENIORITIES, aviso.seniority)}
       </span>
       {aviso.ubicacion && (
-        <span className="chip">
-          <i className="fa-solid fa-location-dot"></i> {aviso.ubicacion}
+        <span>
+          <Icono nombre="location_on" /> {aviso.ubicacion}
         </span>
       )}
     </div>

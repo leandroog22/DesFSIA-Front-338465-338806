@@ -12,6 +12,7 @@ import { aNumeroOpcional, quitarVacios } from '../../utils/objetos'
 import { mensajeDeError } from '../../utils/errores'
 import CampoError from '../comunes/CampoError'
 import AlertaError from '../comunes/AlertaError'
+import Spinner from '../comunes/Spinner'
 
 // Edicion sencilla en linea (requerimiento 5.1.3): reemplaza la fila del
 // listado por un formulario con los datos principales del aviso.
@@ -72,7 +73,7 @@ const AvisoEdicionInline = ({ aviso, onCerrar }) => {
     aviso.categoria && !categorias.some((c) => c._id === aviso.categoria._id)
 
   return (
-    <form className="aviso-fila aviso-fila-editando" onSubmit={handleSubmit(guardar)} noValidate>
+    <form className="aviso-item aviso-item-editando" onSubmit={handleSubmit(guardar)} noValidate>
       <div className="edicion-grilla">
         <div className="form-group edicion-titulo">
           <label>Título</label>
@@ -151,7 +152,7 @@ const AvisoEdicionInline = ({ aviso, onCerrar }) => {
 
       <div className="acciones">
         <button type="submit" className="btn btn-primario btn-chico" disabled={!isValid || isSubmitting}>
-          {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Guardar cambios'}
+          {isSubmitting ? <Spinner enLinea /> : 'Guardar cambios'}
         </button>
         <button type="button" className="btn btn-secundario btn-chico" onClick={onCerrar} disabled={isSubmitting}>
           Cancelar

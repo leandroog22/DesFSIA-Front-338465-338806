@@ -1,14 +1,25 @@
 import { useEffect, useId, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { joiResolver } from '@hookform/resolvers/joi'
+import Joi from 'joi'
 import { toast } from 'react-toastify'
 import { subirImagenAvisoService } from '../../services/avisos.services'
+import { imagenSchema } from '../../validators/avisos.validators'
 import { TAMANIO_MAXIMO_IMAGEN_MB } from '../../constants/avisos.constants'
 import { mensajeDeError } from '../../utils/errores'
 import CampoError from '../comunes/CampoError'
+import Icono from '../comunes/Icono'
+import Spinner from '../comunes/Spinner'
 
-const BYTES_MAXIMOS = TAMANIO_MAXIMO_IMAGEN_MB * 1024 * 1024
+// Aca la imagen es obligatoria (el formulario solo sirve para subirla).
+// Reusa la validacion de tipo y tamaño del alta.
+const subidaSchema = Joi.object({
+  imagen: imagenSchema.custom((archivos, helpers) => (archivos?.length ? archivos : helpers.error('any.required'))).messages({
+    'any.required': 'Elegí una imagen',
+  }),
+})
 
-// Subida del logo del aviso a Cloudinary, a traves del backend.
+// Subida o reemplazo de la portada de un aviso ya publicado.
 const ImagenAvisoForm = ({ avisoId, tieneImagen, onSubida }) => {
   const inputId = useId()
   const [preview, setPreview] = useState(null)
@@ -19,7 +30,7 @@ const ImagenAvisoForm = ({ avisoId, tieneImagen, onSubida }) => {
     control,
     reset,
     formState: { errors, isSubmitting, isValid },
-  } = useForm({ mode: 'onChange' })
+  } = useForm({ resolver: joiResolver(subidaSchema), mode: 'onChange' })
 
   const archivo = useWatch({ control, name: 'imagen' })?.[0]
 
@@ -38,7 +49,7 @@ const ImagenAvisoForm = ({ avisoId, tieneImagen, onSubida }) => {
   const subir = async (datos) => {
     try {
       const aviso = await subirImagenAvisoService(avisoId, datos.imagen[0])
-      toast.success('Imagen actualizada')
+      toast.success('Portada actualizada')
       reset()
       onSubida(aviso)
     } catch (error) {
@@ -47,44 +58,29 @@ const ImagenAvisoForm = ({ avisoId, tieneImagen, onSubida }) => {
   }
 
   return (
-    <form className="imagen-form" onSubmit={handleSubmit(subir)} noValidate>
-      <label htmlFor={inputId} className="zona-archivo">
-        {preview ? (
-          <img src={preview} alt="Vista previa" />
+    <form onSubmit={handleSubmit(subir)} noValidate>
+      <label htmlFor={inputId} className="zona-archivo" style={{ minHeight: 170 }}>
+        {preview && !errors.imagen ? (
+          <img src={preview} alt="Vista previa" style={{ maxHeight: 150, borderRadius: 8 }} />
         ) : (
           <>
-            <i className="fa-solid fa-cloud-arrow-up"></i>
-            <span>{tieneImagen ? 'Reemplazar logo' : 'Subir el logo de tu empresa'}</span>
-            <span className="texto-chico texto-suave">JPG, PNG o WebP · hasta {TAMANIO_MAXIMO_IMAGEN_MB} MB</span>
+            <span className="zona-archivo-icono">
+              <Icono nombre="cloud_upload" />
+            </span>
+            <strong>{tieneImagen ? 'Reemplazar portada' : 'Subir portada'}</strong>
+            <span>PNG, JPG o WebP hasta {TAMANIO_MAXIMO_IMAGEN_MB} MB</span>
           </>
         )}
       </label>
-      {/* Las validaciones corren en orden y frenan en la primera que falla.
-          Son las mismas que aplica multer en el backend. */}
-      <input
-        id={inputId}
-        type="file"
-        accept="image/*"
-        className="solo-lectores"
-        {...register('imagen', {
-          validate: {
-            requerida: (archivos) => archivos?.length > 0 || 'Elegí una imagen',
-            esImagen: (archivos) =>
-              archivos[0].type.startsWith('image/') || 'El archivo tiene que ser una imagen',
-            tamanio: (archivos) =>
-              archivos[0].size <= BYTES_MAXIMOS ||
-              `La imagen no puede superar los ${TAMANIO_MAXIMO_IMAGEN_MB} MB`,
-          },
-        })}
-      />
+      <input id={inputId} type="file" accept="image/*" className="solo-lectores" {...register('imagen')} />
       <CampoError error={errors.imagen} />
 
       {archivo && (
-        <div className="acciones">
+        <div className="acciones" style={{ marginTop: 12 }}>
           <button type="submit" className="btn btn-primario btn-chico" disabled={!isValid || isSubmitting}>
-            {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Subir imagen'}
+            {isSubmitting ? <Spinner enLinea /> : 'Subir imagen'}
           </button>
-          <button type="button" className="btn btn-secundario btn-chico" onClick={() => reset()} disabled={isSubmitting}>
+          <button type="button" className="btn btn-fantasma btn-chico" onClick={() => reset()} disabled={isSubmitting}>
             Cancelar
           </button>
         </div>

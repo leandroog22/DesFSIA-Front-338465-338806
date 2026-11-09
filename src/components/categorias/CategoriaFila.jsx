@@ -11,6 +11,7 @@ import {
 import { quitarCategoria, reemplazarCategoria } from '../../features/categorias/categorias.slice'
 import { mensajeDeError } from '../../utils/errores'
 import CampoError from '../comunes/CampoError'
+import Icono from '../comunes/Icono'
 
 const CategoriaFila = ({ categoria }) => {
   const dispatch = useDispatch()
@@ -105,13 +106,13 @@ const CategoriaFila = ({ categoria }) => {
       <div>
         <p className="categoria-nombre">
           {categoria.nombre}
-          {!categoria.activa && <span className="badge badge-cerrado">Inactiva</span>}
+          {!categoria.activa && <span className="pill pill-cerrado">Inactiva</span>}
         </p>
         <p className="texto-suave texto-chico">{categoria.descripcion || 'Sin descripción'}</p>
       </div>
 
       {confirmandoBorrado ? (
-        <div className="aviso-fila-acciones confirmacion-inline">
+        <div className="aviso-item-acciones confirmacion-inline">
           <span>¿Eliminar?</span>
           <button type="button" className="btn btn-peligro btn-chico" onClick={eliminar} disabled={procesando}>
             Sí
@@ -126,7 +127,7 @@ const CategoriaFila = ({ categoria }) => {
           </button>
         </div>
       ) : (
-        <div className="aviso-fila-acciones">
+        <div className="aviso-item-acciones">
           <button
             type="button"
             className="btn-icono"
@@ -135,7 +136,7 @@ const CategoriaFila = ({ categoria }) => {
             title={categoria.activa ? 'Desactivar' : 'Activar'}
             aria-label={categoria.activa ? 'Desactivar categoría' : 'Activar categoría'}
           >
-            <i className={`fa-solid ${categoria.activa ? 'fa-toggle-on' : 'fa-toggle-off'}`}></i>
+            <Icono nombre={categoria.activa ? 'toggle_on' : 'toggle_off'} />
           </button>
           <button
             type="button"
@@ -144,7 +145,7 @@ const CategoriaFila = ({ categoria }) => {
             title="Editar"
             aria-label="Editar categoría"
           >
-            <i className="fa-solid fa-pen"></i>
+            <Icono nombre="edit" />
           </button>
           <button
             type="button"
@@ -153,7 +154,7 @@ const CategoriaFila = ({ categoria }) => {
             title="Eliminar"
             aria-label="Eliminar categoría"
           >
-            <i className="fa-solid fa-trash"></i>
+            <Icono nombre="delete" />
           </button>
         </div>
       )}

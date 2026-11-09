@@ -14,6 +14,7 @@ import { obtenerPerfilService, obtenerUsoService } from '../services/usuarios.se
 import { obtenerCategoriasService } from '../services/categorias.services'
 import { mensajeDeError } from '../utils/errores'
 import PlanBadge from '../components/comunes/PlanBadge'
+import Icono from '../components/comunes/Icono'
 
 const ContainerPage = () => {
   const dispatch = useDispatch()
@@ -75,52 +76,41 @@ const ContainerPage = () => {
     <div className="app">
       <header className="main-header">
         <div className="header-content">
-          <Link to={estaLogueado ? '/dashboard' : '/'} className="app-logo">
-            <span className="app-logo-icono">
-              <i className="fa-solid fa-briefcase"></i>
-            </span>
-            <span>Tripalium</span>
+          <Link to={estaLogueado ? '/dashboard' : '/'} className="marca">
+            <img src="/logo-isotipo.png" alt="" />
+            <span>TRIPALIUM</span>
           </Link>
 
           {estaLogueado && (
             <>
               <nav className="main-nav">
-                <NavLink to="/dashboard">
-                  <i className="fa-solid fa-chart-pie"></i> Panel
-                </NavLink>
+                <NavLink to="/dashboard">Inicio</NavLink>
                 <NavLink to="/avisos" end>
-                  <i className="fa-solid fa-list-ul"></i> Mis avisos
+                  Mis avisos
                 </NavLink>
-                <NavLink to="/explorar">
-                  <i className="fa-solid fa-compass"></i> Explorar
-                </NavLink>
-                {esAdmin && (
-                  <NavLink to="/categorias">
-                    <i className="fa-solid fa-tags"></i> Categorías
-                  </NavLink>
-                )}
+                <NavLink to="/explorar">Explorar</NavLink>
+                {esAdmin && <NavLink to="/categorias">Categorías</NavLink>}
               </nav>
 
               <div className="header-usuario">
-                <Link to="/avisos/nuevo" className="btn btn-primario btn-chico ocultar-movil">
-                  <i className="fa-solid fa-plus"></i> Publicar
+                <Link to="/avisos/nuevo" className="btn btn-primario ocultar-movil">
+                  <Icono nombre="add" /> Nuevo aviso
                 </Link>
-                <div className="usuario-info">
-                  <span className="usuario-nombre">{usuario?.nombreEmpresa}</span>
-                  {esAdmin ? (
-                    <span className="badge badge-admin">Admin</span>
-                  ) : (
-                    <PlanBadge plan={usuario?.plan} />
-                  )}
-                </div>
-                <button
-                  type="button"
-                  className="btn-icono"
-                  onClick={handleLogout}
-                  title="Cerrar sesión"
-                  aria-label="Cerrar sesión"
-                >
-                  <i className="fa-solid fa-right-from-bracket"></i>
+                {esAdmin ? (
+                  <span className="pill pill-admin">Admin</span>
+                ) : (
+                  <PlanBadge plan={usuario?.plan} prefijo={usuario?.plan === 'plus'} />
+                )}
+                <span className="usuario-chip">
+                  <span className="avatar">
+                    <Icono nombre="person" />
+                  </span>
+                  <span>{usuario?.nombreEmpresa}</span>
+                </span>
+                <span className="separador-vertical ocultar-movil"></span>
+                <button type="button" className="boton-salir" onClick={handleLogout} title="Cerrar sesión">
+                  <Icono nombre="logout" />
+                  <span>Cerrar sesión</span>
                 </button>
               </div>
             </>
@@ -133,7 +123,10 @@ const ContainerPage = () => {
       </main>
 
       <footer className="main-footer">
-        Tripalium · Desarrollo Full Stack integrado con IA · Universidad ORT Uruguay
+        <div className="footer-content">
+          <span>© 2026 Tripalium Job Board. Infraestructura de talento tecnológico.</span>
+          <span>Desarrollo Full Stack integrado con IA · Universidad ORT Uruguay</span>
+        </div>
       </footer>
     </div>
   )

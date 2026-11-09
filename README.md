@@ -18,6 +18,10 @@ Las mismas librerías vistas en clase (material de Clase 17 y 18):
 | Gráfico | chart.js + react-chartjs-2 |
 | Notificaciones | react-toastify |
 
+## Diseño
+
+La interfaz sigue los diseños hechos en Stitch y el design system **Executive Trust Matrix**: tipografía Inter, índigo `#3730A3` como color de marca, ámbar reservado para Premium y avisos de límite, neutros slate, tarjetas de 12px y controles de 8px. Los colores y medidas están como variables CSS al principio de `src/index.css`, y los íconos son Material Symbols (`components/comunes/Icono.jsx`).
+
 ## Estructura
 
 ```
@@ -51,8 +55,8 @@ Flujo de una acción: **componente → service → API**, y la respuesta vuelve 
 | 5.1.4 | Filtros | `components/avisos/FiltrosAvisos.jsx` |
 | 6.1.1 | Porcentaje (Plus) o cantidad (Premium) | `components/dashboard/UsoPlan.jsx` |
 | 6.1.2 | Cambio de plan | `components/dashboard/CambioPlan.jsx` |
-| 7 | Gráfico | `components/dashboard/EstadisticasChart.jsx` |
-| — | Manejo de imágenes | `components/avisos/ImagenAvisoForm.jsx` |
+| 7 | Gráficos (donas de Chart.js y barras por categoría) | `components/dashboard/Graficos.jsx`, `DonaEstadistica.jsx` |
+| — | Manejo de imágenes (portada en el alta y reemplazo en el detalle) | `components/avisos/AvisoForm.jsx`, `ImagenAvisoForm.jsx` |
 
 Además: pantalla **Explorar** (bolsa de trabajo con los avisos activos de todas las empresas), detalle de aviso con el **análisis de IA** y reintento, cerrar/reabrir avisos para liberar cupo, ABM de **categorías** para el administrador y cierre automático de la sesión cuando vence el token.
 

@@ -10,6 +10,7 @@ import { quitarVacios } from '../../utils/objetos'
 import { mensajeDeError } from '../../utils/errores'
 import CampoError from '../comunes/CampoError'
 import AlertaError from '../comunes/AlertaError'
+import Spinner from '../comunes/Spinner'
 
 const CategoriaForm = () => {
   const nombreId = useId()
@@ -68,7 +69,7 @@ const CategoriaForm = () => {
       </div>
       <AlertaError mensaje={errorServidor} />
       <button type="submit" className="btn btn-primario btn-bloque" disabled={!isValid || isSubmitting}>
-        {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Crear categoría'}
+        {isSubmitting ? <Spinner enLinea /> : 'Crear categoría'}
       </button>
     </form>
   )
