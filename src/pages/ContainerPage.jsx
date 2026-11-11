@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Outlet, Link, NavLink, useLocation, useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -10,6 +10,7 @@ import {
 } from '../features/auth/auth.slice'
 import { setCategorias } from '../features/categorias/categorias.slice'
 import { setUso } from '../features/uso/uso.slice'
+import useCambioTema from '../hooks/useCambioTema'
 import { obtenerPerfilService, obtenerUsoService } from '../services/usuarios.services'
 import { obtenerCategoriasService } from '../services/categorias.services'
 import { mensajeDeError } from '../utils/errores'
@@ -23,7 +24,20 @@ const ContainerPage = () => {
   const esAdmin = useSelector(selectEsAdmin)
   const usuario = useSelector((state) => state.auth.usuario)
   const token = useSelector((state) => state.auth.token)
+  const modoTema = useSelector((state) => state.tema.modo)
+  const esOscuro = modoTema === 'oscuro'
+  const cambiarTema = useCambioTema()
   const { pathname } = useLocation()
+
+  // El tema se aplica como atributo en <html>: index.css redefine las
+  // variables de color bajo [data-tema='oscuro'] y el resto de los estilos
+  // no cambia. El <html> esta fuera de React, por eso se hace en un efecto.
+  // Es useLayoutEffect (corre antes de que el navegador pinte) para que al
+  // cargar no se vea un parpadeo del tema claro, y para que la transicion
+  // de useCambioTema encuentre el tema nuevo ya aplicado.
+  useLayoutEffect(() => {
+    document.documentElement.dataset.tema = modoTema
+  }, [modoTema])
 
   // En una SPA el navegador no vuelve arriba solo al cambiar de pantalla:
   // sin esto, ir del formulario al detalle deja la vista scrolleada.
@@ -115,6 +129,16 @@ const ContainerPage = () => {
               </div>
             </>
           )}
+
+          <button
+            type="button"
+            className="boton-tema"
+            onClick={cambiarTema}
+            title={esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            aria-label={esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          >
+            <Icono nombre={esOscuro ? 'light_mode' : 'dark_mode'} />
+          </button>
         </div>
       </header>
 

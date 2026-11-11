@@ -29,10 +29,10 @@ src/
 ├── api/api.js            instancia de axios + interceptores (token y sesión vencida)
 ├── app/guards/           ProtectedRoute · PublicRoute · AdminRoute
 ├── store/store.js        configureStore + sincronización de la sesión con localStorage
-├── features/             un slice por dominio: auth · avisos · uso · estadisticas · categorias
+├── features/             un slice por dominio: auth · avisos · uso · estadisticas · categorias · tema
 ├── services/             única capa que conoce las URLs de la API
 ├── validators/           esquemas Joi (los mismos límites que el backend)
-├── hooks/                useRefrescarResumen
+├── hooks/                useRefrescarResumen · useCambioPlan · useCambioTema
 ├── pages/                una carpeta por pantalla
 ├── components/           componentes por área (auth, avisos, dashboard, categorias, comunes)
 ├── constants/ · utils/
@@ -59,6 +59,20 @@ Flujo de una acción: **componente → service → API**, y la respuesta vuelve 
 | — | Manejo de imágenes (portada en el alta y reemplazo en el detalle) | `components/avisos/AvisoForm.jsx`, `ImagenAvisoForm.jsx` |
 
 Además: pantalla **Explorar** (bolsa de trabajo con los avisos activos de todas las empresas), detalle de aviso con el **análisis de IA** y reintento, cerrar/reabrir avisos para liberar cupo, ABM de **categorías** para el administrador y cierre automático de la sesión cuando vence el token.
+
+También: **modo oscuro** (design system *Executive Dark Trust* de Stitch) con transición animada al cambiar, guardado en Redux y en `localStorage`, y un **fondo animado en WebGL** en login y registro (`components/auth/FondoAnimado.jsx`).
+
+## Cuentas de demo
+
+La base publicada tiene datos de prueba (seed `npm run seed:demo` del backend). Todas las empresas entran con la contraseña `demo1234`:
+
+| Usuario | Plan | Qué muestra |
+|---|---|---|
+| `solvia` | Premium | 6 avisos activos y 1 cerrado: uso en cantidad, sin límite |
+| `atalaya` | Premium | 5 avisos activos |
+| `nodosur` | Plus | 4 de 4 activos: límite alcanzado, alta de avisos bloqueada |
+| `mirador` | Plus | 3 de 4 activos (75%) |
+| `quantia` | Plus | 2 de 4 activos (50%) y botón para pasar a Premium |
 
 ## Cómo levantarlo
 

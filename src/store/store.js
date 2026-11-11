@@ -4,7 +4,9 @@ import avisosReducer from '../features/avisos/avisos.slice'
 import usoReducer from '../features/uso/uso.slice'
 import estadisticasReducer from '../features/estadisticas/estadisticas.slice'
 import categoriasReducer from '../features/categorias/categorias.slice'
+import temaReducer from '../features/tema/tema.slice'
 import { guardarSesion, borrarSesion } from '../utils/sesion'
+import { guardarTema } from '../utils/tema'
 
 const store = configureStore({
   reducer: {
@@ -13,6 +15,7 @@ const store = configureStore({
     uso: usoReducer,
     estadisticas: estadisticasReducer,
     categorias: categoriasReducer,
+    tema: temaReducer,
   },
 })
 
@@ -21,10 +24,18 @@ const store = configureStore({
 // tiene que acordarse de guardar o borrar la sesion a mano.
 // Redux Toolkit es inmutable: si auth no cambio, sigue siendo el mismo objeto,
 // y con comparar referencias alcanza para no escribir en cada accion.
+// Lo mismo con el tema: se guarda solo cuando cambia.
 let authAnterior = store.getState().auth
+let modoAnterior = store.getState().tema.modo
 
 store.subscribe(() => {
-  const auth = store.getState().auth
+  const { auth, tema } = store.getState()
+
+  if (tema.modo !== modoAnterior) {
+    modoAnterior = tema.modo
+    guardarTema(tema.modo)
+  }
+
   if (auth === authAnterior) return
   authAnterior = auth
 
